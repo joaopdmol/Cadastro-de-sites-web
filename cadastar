@@ -1,0 +1,91 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Site implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String descricao;
+    private String url;
+    private String dataCadastro;
+
+    public Site(String descricao, String url, String dataCadastro) {
+        this.descricao = descricao;
+        this.url = url;
+        this.dataCadastro = dataCadastro;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getDataCadastro() {
+        return dataCadastro;
+    }
+}
+
+public class CadastroDeSites {
+    public static void main(String[] args) {
+        List<Site> sitesCadastrados = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Opções:");
+            System.out.println("1 - Cadastrar um novo site");
+            System.out.println("2 - Listar sites cadastrados");
+            System.out.println("3 - Sair");
+
+            int escolha = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (escolha) {
+                case 1:
+                    System.out.println("Informe a descrição do site: ");
+                    String descricao = scanner.nextLine();
+                    System.out.println("Informe a URL do site: ");
+                    String url = scanner.nextLine();
+                    System.out.println("Informe a data de cadastro (dd/mm/aaaa): ");
+                    String dataCadastro = scanner.nextLine();
+
+                    Site novoSite = new Site(descricao, url, dataCadastro);
+                    sitesCadastrados.add(novoSite);
+
+                    try {
+                        // Gere um código de cadastro único com base no índice da lista
+                        int codigoCadastro = sitesCadastrados.indexOf(novoSite);
+                        String nomeArquivo = codigoCadastro + ".data";
+
+                        ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(nomeArquivo));
+                        outputStream.writeObject(novoSite);
+                        outputStream.close();
+
+                        System.out.println("Site cadastrado com sucesso. Código de cadastro: " + codigoCadastro);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 2:
+                    System.out.println("Sites cadastrados:");
+                    for (int i = 0; i < sitesCadastrados.size(); i++) {
+                        System.out.println("Código de Cadastro: " + i);
+                        Site site = sitesCadastrados.get(i);
+                        System.out.println("Descrição: " + site.getDescricao());
+                        System.out.println("URL: " + site.getUrl());
+                        System.out.println("Data de Cadastro: " + site.getDataCadastro());
+                        System.out.println();
+                    }
+                    break;
+                case 3:
+                    System.out.println("Saindo do programa...");
+                    scanner.close();
+                    System.exit(0);
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+}
